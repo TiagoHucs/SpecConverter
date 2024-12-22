@@ -14,4 +14,12 @@ public class Table {
     public void addDataLine(List<String> lineData) {
         data.add(lineData);
     }
+
+    public List<String> getHeaders() {
+        return this.headers;
+    }
+
+    public List<List<String>> getData() {
+        return this.data;
+    }
 }

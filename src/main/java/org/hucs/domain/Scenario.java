@@ -14,4 +14,8 @@ public class Scenario {
     public List<Step> getSteps() {
         return steps;
     }
+
+    public String getTitle() {
+        return this.title;
+    }
 }
