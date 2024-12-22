@@ -7,28 +7,27 @@ import org.hucs.domain.Table;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureToHtmlFile {
 
-
+    static StringBuilder builder = new StringBuilder();
     public static void convert(Feature feature,String destinyPath) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<!DOCTYPE html> \n");
-        builder.append("<html lang=\"pt-br> \n");
-        builder.append("<head> \n");
-        builder.append("<meta charset=\"UTF-8\"> \n");
-        builder.append("<meta name=\"viewport\" content=\"width = device - width, initial - scale = 1.0\">\n");
-        builder.append("<title> " + feature.getName() + " </title>\n");
-        builder.append("<style> table, th, td {border:1px solid black; </style>\n");
-        builder.append("</head>\n");
-        builder.append("<body>\n");
-        builder.append("<h1> " + feature.getName() + " </h1>\n");
-        builder.append("<p> Esta é uma página HTML gerada com Java.</p>\n");
+        builder = new StringBuilder();
+        append("<!DOCTYPE html> ");
+        append("<html lang=\"pt-br\"> ");
+        append("<head> ");
+        append("<meta charset=\"UTF-8\"> ");
+        append("<meta name=\"viewport\" content=\"width = device - width, initial - scale = 1.0\">");
+        append("<title> " + feature.getName() + " </title>");
+        append("<style> table, th, td {border:1px solid black; </style>");
+        append("</head>");
+        append("<body>");
+        append("<h1> " + feature.getName() + " </h1>");
+        append("<hr>");
         generateScenarios(builder,feature.getScenarios());
-        builder.append("</body>\n");
-        builder.append("</html>\n");
+        append("</body>");
+        append("</html>");
 
         try (FileWriter escritor = new FileWriter(destinyPath)) {
             escritor.write(builder.toString());
@@ -40,7 +39,7 @@ public class FeatureToHtmlFile {
 
     private static void generateScenarios(StringBuilder builder, List<Scenario> scenarios) {
         for (Scenario scenario: scenarios){
-            builder.append("<div>Cenario: "+ scenario.getTitle() + "</div>\n");
+            append("<h2>Cenario: "+ scenario.getTitle() + "</h2>");
             generateSteps(builder,scenario.getSteps());
         }
     }
@@ -50,57 +49,44 @@ public class FeatureToHtmlFile {
             if(step.isTableStep()){
                 generateTable(builder,step);
             }else {
-                builder.append("<a>"+ step.getDescription() + "</a>\n");
+                append("<p>"+ step.getDescription() + "</p>");
             }
         }
     }
 
     private static void generateTable(StringBuilder builder, Step step) {
         Table table = step.getTable();
-        builder.append("<table>\n");
+        append("<table>");
 
         //headers
-        builder.append("<tr>\n");
+        append("<tr>");
         for (String title : table.getHeaders()){
-            builder.append("<th>"+title+"</th>\n");
+            append("<th>"+title+"</th>");
         }
-        builder.append("</tr>\n");
+        append("</tr>");
 
         //data
         for (List<String> data : table.getData()){
-            builder.append("<tr>\n");
+            append("<tr>");
             for (String value : data){
-                builder.append("<td>"+value+"</td>\n");
+                append("<td>"+value+"</td>");
             }
-            builder.append("</tr>\n");
+            append("</tr>");
         }
 
-        builder.append("</table>\n");
+        append("</table>");
     }
 
-    // Método para indentar as linhas HTML
-    private static List<String> indentarHTML(List<String> linhas) {
-        List<String> linhasIndentadas = new ArrayList<>();
-        int nivelIndentacao = 0;
+   private static void append(String line){
+        builder.append(getIdent(line) + line + "\n");
+   }
 
-        for (String linha : linhas) {
-            // Remove espaços extras no início ou fim da linha
-            linha = linha.trim();
-
-            // Verifica se a linha fecha uma tag
-            if (linha.startsWith("</")) {
-                nivelIndentacao--;
-            }
-
-            // Adiciona a linha com a indentação correta
-            linhasIndentadas.add("    ".repeat(Math.max(0, nivelIndentacao)) + linha);
-
-            // Verifica se a linha abre uma tag e não fecha na mesma linha
-            if (linha.startsWith("<") && !linha.startsWith("</") && !linha.endsWith("/>")) {
-                nivelIndentacao++;
-            }
+    private static String getIdent(String line){
+        if(line.contains("table")){
+            return "    ";
         }
-        return linhasIndentadas;
+        return "";
     }
+
 
 }
