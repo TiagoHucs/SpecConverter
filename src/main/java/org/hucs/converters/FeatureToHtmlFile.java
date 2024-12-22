@@ -12,6 +12,8 @@ import java.util.List;
 public class FeatureToHtmlFile {
 
     static StringBuilder builder = new StringBuilder();
+    static int indentLevel = 0;
+
     public static void convert(Feature feature,String destinyPath) {
         builder = new StringBuilder();
         append("<!DOCTYPE html> ");
@@ -78,14 +80,25 @@ public class FeatureToHtmlFile {
     }
 
    private static void append(String line){
-        builder.append(getIdent(line) + line + "\n");
+        configIdent(line);
+        builder.append(getIdent() + line + "\n");
    }
 
-    private static String getIdent(String line){
-        if(line.contains("table")){
-            return "    ";
+    private static void configIdent(String line){
+        if(line.contains("<table>")){
+            indentLevel++;
         }
-        return "";
+        if(line.contains("</table>")){
+            indentLevel--;
+        }
+    }
+
+    private static String getIdent(){
+        String tabs = "";
+        for(int i = indentLevel; i > 0; i--){
+            tabs+= " ";
+        }
+        return tabs;
     }
 
 
