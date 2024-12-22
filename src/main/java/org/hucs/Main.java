@@ -10,5 +10,6 @@ public class Main {
 
         Feature feature = FileGherkinToFeature
                 .convert(originPath);
+        feature.getName();
     }
 }
